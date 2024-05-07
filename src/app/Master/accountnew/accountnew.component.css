@@ -1,0 +1,13 @@
+input.ng-invalid.ng-touched{
+    border-color: red;
+   }
+
+
+   .cdk-drag {
+    cursor: move;
+  }
+  
+  .cdk-drag-dragging {
+    opacity: 0.5;
+  }
+

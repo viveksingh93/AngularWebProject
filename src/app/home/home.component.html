@@ -1,0 +1,38 @@
+<div class="card">
+  <div class="card-header bg-white">
+    <h3 class="text-danger">
+      Login Details
+    </h3>
+  </div>
+  <div class="card-body" style="overflow: scroll;">
+    <table class="table table-bordered table-sm">
+      <thead class="table-secondary">
+        <tr>
+          <th>Details</th>
+          <th>Data</th>
+         
+          
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngIf="loginDisplay.valueOf; else noData">
+          <tr *ngFor="let loginDetail of dataSource; let i = index">
+           
+            <td>{{loginDetail.claim}}</td>
+            <td>{{loginDetail.value}}</td>
+           
+          </tr>
+        </ng-container>
+        <ng-template #noData>
+          <tr>
+            <td colspan="8" class="text-danger">No data found</td>
+          </tr>
+        </ng-template>
+
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+

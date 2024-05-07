@@ -1,0 +1,385 @@
+<div class="card">
+    <div class="card-header bg-white">
+        <h3 class="text-danger">
+            Purchase Requisition Add Form
+        </h3>
+    </div>
+    <div class="card-body">
+        <form class="row g-3 prMargin" [formGroup]="addPRForm" (ngSubmit)="onFormSubmit()">
+            <div class="col-md-3">
+                <label for="" class="form-label ">Requisition ID</label>
+                <input type="text" class="form-control bdrnone" formControlName="nPRNID" readonly>
+            </div>
+            <div class="col-md-3">
+                <label for="" class="form-label ">PRN Date</label>
+                <input type="date" class="form-control bdrnone" formControlName="dtPRNDate"
+                    [(ngModel)]="selectedPRNDate" readonly>
+            </div>
+            <div class="col-md-3">
+                <label for="" class="form-label ">Approval Status</label>
+                <input type="text" class="form-control bdrnone" readonly formControlName="sPRNApprovalStatus">
+            </div>
+            <div class="col-md-3">
+                <label for="" class="form-label ">Created By</label>
+                <input type="text" class="form-control bdrnone" readonly formControlName="sPRNCreatedBy">
+            </div>
+            <div class="col-md-3">
+                <label for="" class="form-label mt-2">Project</label>
+                <dic class="text-danger"> *</dic>
+                <input type="text" class="form-control " formControlName="sPRNProject" maxlength="100">
+                <div class="text-form text-danger" *ngIf="PRNProject.errors?.['required'] && PRNProject.touched">
+                    Project Name is Required
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label for="" class="form-label mt-2">Request Initiated By</label>
+                <div>
+                    <input type="text" class="form-control " readonly formControlName="sPRNRequestInitiatedBy">
+                </div>
+
+            </div>
+            <div class="col-md-3">
+                <label class="col-sm-5 col-form-label mt-2">Taxable</label>
+                <div class="col-sm- form-switch">
+                    <input class="form-check-input togal col-form-label switctfont " type="checkbox"
+                        id="flexSwitchCheckChecked" checked formControlName="bPRNTaxable">
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <label for="" class="form-label mt-2">Priority</label>
+                <select class="form-select form-control   " aria-label=".form-select-lg example"
+                    formControlName="sPRNPriority">
+                    <option value="">Find items</option>
+                    <option value="Low">Low</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="" class="form-label mt-2">PO#</label>
+                <input type="text" class="form-control " formControlName="sPRNPurchaseOrderNo" maxlength="50">
+            </div>
+            <div class="col-md-3">
+                <label for="" class="form-label mt-2">Terms</label>
+                <select class="form-select form-control " aria-label=".form-select-lg example"
+                    formControlName="sTermCode">
+                    <option value="">Find items</option>
+                    <option [value]="term.sTermCode" *ngFor="let term of TermList">{{term.sTermCode}}
+                    </option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="inputState" class="form-label mt-2">Due In (Days)</label>
+                <input type="text" class="form-control " formControlName="nPRNDueInDays" maxlength="3"
+                    (keypress)="OnlyNumberAllowed($event)">
+            </div>
+            <div class="col-md-3">
+                <label for="" class="form-label mt-2">Ship Via</label>
+                <input type="text" class="form-control " formControlName="sPRNShipVia" maxlength="50">
+            </div>
+            <div class="col-md-3">
+                <label for="" class="form-label mt-2">FOB</label>
+                <input type="text" class="form-control " formControlName="sPRNFOB" maxlength="100">
+            </div>
+            <div class="col-md-3">
+                <label for="" class="form-label mt-2">Date Ordered</label>
+                <input type="date" class="form-control " formControlName="dtPRNDateOrdered"
+                    [(ngModel)]="selectedPRNDateOrdered">
+            </div>
+            <div class="col-md-3">
+                <label for="inputState" class="form-label mt-2">Date Required <dic class="text-danger"> *</dic></label>
+                <input type="date" class="form-control " formControlName="dtPRNDateRequired"
+                    min="{{currentDate|date:'yyyy-MM-dd'}}" [(ngModel)]="selectedPRNDateRequired">
+                <div class="text-form text-danger"
+                    *ngIf="PRNDateRequired.errors?.['required'] && PRNDateRequired.touched">
+                    Must be Date Required
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label for="" class="form-label mt-2">Deliver To <dic class="text-danger"> *</dic></label>
+                <input type="text" class="form-control " formControlName="sPRNDeliverTo" maxlength="100">
+                <div class="text-form text-danger" *ngIf="PRNDeliverTo.errors?.['required'] && PRNDeliverTo.touched">
+                    Must be specify in Deliver to
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label for="" class="form-label mt-2">Vendor Name</label>
+                <input type="text" class="form-control " formControlName="sPRNVendorName" maxlength="100">
+            </div>
+            <div class="col-md-3">
+                <label for="" class="form-label mt-2">Vendor Contact</label>
+                <input type="text" class="form-control " formControlName="sPRNVendorContact"
+                    (keypress)="keyPress($event)" minlength=10 maxlength=14>
+            </div>
+            <div class="col-md-3">
+                <label for="inputState" class="form-label mt-2">Vendor Phone</label>
+                <input type="text" class="form-control " formControlName="sPRNVendorPhone" inputmode="numeric"
+                    maxlength=14 (keypress)="keyPress($event)">
+            </div>
+
+            <div class="col-md-3">
+                <label for="" class="form-label mt-2">Vendor Fax</label>
+                <input type="text" class="form-control " formControlName="sPRNVendorFax" minlength=10 maxlength=14
+                    (keypress)="keyPress($event)">
+            </div>
+
+            <div class="col-md-3">
+                <label for="" class="form-label mt-2">Vendor Address</label>
+                <textarea class="form-control textarea" formControlName="sPRNVendorAddress" maxlength="500"></textarea>
+            </div>
+            <div class="col-md-3">
+                <label for="" class="form-label mt-2">Notes</label>
+                <textarea class="form-control textarea" formControlName="sPRNNotes" maxlength="500"></textarea>
+            </div>
+            <div class="col-md-3">
+                <label for="" class="form-label mt-2">Approving Manager</label>
+                <select class="form-select form-control ">
+                    <option value="0">Find Approving Manager</option>
+                    <option value="1">Shashank  Kale</option>
+                    <option value="2">Tushar Maladkar</option>
+                    <option value="3">Vivek singh</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="" class="form-label mt-2">PRN Approvers</label>
+                <select class="form-select form-control  " aria-label=".form-select-lg example"
+                    formControlName="nPRNApproverCode">
+                    <option value="">Find items</option>
+                    <option [value]="PRNApprover.nPRNApproverCode" *ngFor="let PRNApprover of PRNApproverList">
+                        {{PRNApprover.sPRNApproverName}}
+                    </option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="" class="form-label mt-2">Extended Total</label>
+                <input type="text" inputmode="numeric" class="form-control bdrnone " formControlName="nExtendedTotal"
+                    (keypress)="OnlyNumberAllowed($event)" readonly>
+            </div>
+
+            <div class="col-md-3">
+                <label for="" class="form-label mt-2">Extended Total With Taxes</label>
+                <input type="number" inputmode="numeric" class="form-control bdrnone"
+                    formControlName="nExtendedTotalWithTaxes" (keypress)="OnlyNumberAllowed($event)" readonly>
+            </div>
+            <div class="col-md-3">
+                <label class="col-sm-6 col-form-label mt-2">Manager Approval Needed?</label>
+                <div class="col-sm-6 form-switch">
+                    <input class="form-check-input togal col-form-label switctfont " type="checkbox"    
+                        id="PRNManagerApprovalNeededSwitchCheckChecked"
+                        formControlName="bPRNManagerApprovalNeeded" readonly>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label class="col-sm-6 col-form-label mt-2">President Approval Needed?</label>
+                <div class="col-sm-6 form-switch">
+                    <input class="form-check-input togal col-form-label switctfont" type="checkbox"
+                        id="PRNPresidentApprovalNeededSwitchCheckChecked"
+                        formControlName="bPRNPresidentApprovalNeeded" readonly >
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label for="" class="form-label mt-2">Approval Comment</label>
+                <textarea class="form-control textarea" formControlName="sApprovelComment" maxlength="500" ></textarea>
+            </div>
+            <div class="col-md-3">
+                <label for="" class="form-label mt-2">Final Approval Date</label>
+                <input type="date" class="form-control " formControlName="dtPRNFinalApprovalDate"
+                    [(ngModel)]="selectedPRNFinalApprovalDate">
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                <a routerLink="/PurchaseRequisition" class="btn btn-danger me-md-2 mt-2 ">Cancel</a>
+                <button type="submit" [disabled]="!addPRForm.valid"
+                    class="btn btn-primary me-md-2 mt-2 " aria-disabled="true">{{data.length > 0 ?
+                    'Update':'Save'}}</button>
+                
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Purchase Requisition Line Item List -->
+<div class="card">
+    <div class="card-header background-color">
+        <h3 class="text-danger">
+            Purchase Requisition Line Item List
+            <button class="btn btn-sm btn-primary pull-right" (click)="btnNew()" data-bs-toggle="modal"
+                data-bs-target="#addEditModal">
+                <i class="fa fa-plus"></i> New
+            </button>
+        </h3>
+    </div>
+    <div class="card-body" style="overflow: scroll;">
+        <table class="table table-bordered table-sm properties">
+            <thead class="table-secondary">
+                <tr>
+                    <th>Account No.</th>
+                    <th>Department</th>
+                    <th>Part No.</th>
+                    <th>Description</th>
+                    <th>Unit Cost</th>
+                    <th>Quantity</th>
+                    <th>Extended Cost</th>
+                    <th>Taxes</th>
+                    <th>Extended Cost with Taxes</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="prLineItem.length>0; else noData">
+                    <tr *ngFor="let prlItem of prLineItem;">
+                        <td>{{prlItem.sAccountCode}}</td>
+                        <td>{{prlItem.sDepartmentName}}</td>
+                        <td>{{prlItem.sPartNo}}</td>
+                        <td>{{prlItem.sPartDescription}}</td>
+                        <td>{{prlItem.nUnitCost}}</td>
+                        <td>{{prlItem.nQuantity}}</td>
+                        <td>{{prlItem.nExtendedCost}}</td>
+                        <td>{{prlItem.nTaxes}}</td>
+                        <td>{{prlItem.nExtendedCostwithTaxes}}</td>
+                        <td>
+                            <a [routerLink]="[]" (click)="edit(prlItem.nID)" class="text-success mr-4 action ms-1"
+                                data-bs-toggle="modal" data-bs-target="#addEditModal"><i class="fa fa-edit"></i></a>
+                            <a [routerLink]="[]" (click)="deletePurchaseRequisitionLineItem(prlItem.nID)"
+                                class="text-danger action  ms-1"><i class="fa fa-trash"></i></a>
+                        </td>
+                    </tr>
+                </ng-container>
+                <ng-template #noData>
+                    <tr>
+                        <td colspan="8" class="text-danger">No data found</td>
+                    </tr>
+                </ng-template>
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Create Purchase Requisition Line Item Modal -->
+<div class="modal fade bd-example-modal-lg" id="addEditModal" tabindex="-1" role="dialog"
+    aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #4e9c85;">
+                <h3 class="modal-title text-white">{{lblModalHeader}}</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" (click)="clearData()"></button>
+            </div>
+            <form [formGroup]="prLineItemForm" (ngSubmit)="onSubmit()">
+                <div class="modal-body" style="margin-left: 65px;">
+                    <div class="row mb-2">
+                        <label for="" class="col-sm-4 col-form-label">PRN Master</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control bdrnone" formControlName="nPRNID" readonly />
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <label for="" class="col-sm-4 col-form-label">Account Number</label>
+                        <div class="col-sm-7">
+                            <select class="form-select form-control " aria-label=".form-select-lg example"
+                                formControlName="sAccountCode">
+                                <option [value]="0">Select Account</option>
+                                <option [value]="account.sAccountCode" *ngFor="let account of accountList">
+                                    {{account.sAccountName}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <label for="" class="col-sm-4 col-form-label">Organization departments</label>
+                        <div class="col-sm-7">
+                            <select class="form-select form-control" aria-label=".form-select-lg example"
+                                formControlName="sDepartmentCode">
+                                <option value="Select Department">Select Department</option>
+                                <option [value]="dept.sDepartmentCode" *ngFor="let dept of departmentList">
+                                    {{dept.sDepartmentName}}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <label for="" class="col-sm-4 col-form-label">Part No.</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" formControlName="sPartNo">
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <label for="" class="col-sm-4 col-form-label">Quantity <span
+                                class="text-danger">*</span></label>
+                        <div class="col-sm-7">
+                            <input type="number" class="form-control " name="nQuantity" formControlName="nQuantity"
+                                (keypress)="OnlyNumberAllowed($event)" (keyup)="OnChangeQty()">
+                            <div class=" text-form text-danger"
+                                *ngIf="Quantity.errors?.['required'] && Quantity.touched">
+                                Quantity is Required
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <label for="" class="col-sm-4 col-form-label">Description <span
+                                class="text-danger">*</span></label>
+                        <div class="col-sm-7">
+                            <textarea class="form-control " formControlName="sPartDescription"></textarea>
+                            <div class=" text-form text-danger"
+                                *ngIf="PartDescription.errors?.['required'] && PartDescription.touched">
+                                Description is Required
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <label for="" class="col-sm-4 col-form-label">Unit Cost <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-sm-7">
+                            <input type="number" class="form-control " name="nUnitCost" step="0.00"
+                                formControlName="nUnitCost" NumberOnly (keyup)="OnChangeUnitCost()">
+                            <div class=" text-form text-danger"
+                                *ngIf="nUnitCost.errors?.['required'] && nUnitCost.touched">
+                                Unit Cost is Required
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <label for="" class="col-sm-4 col-form-label">Extended Cost </label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control bdrnone" readonly formControlName="nExtendedCost"
+                                (keyup)="onExtendedCost()">
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <label for="" class="col-sm-4 col-form-label">Taxes</label>
+                        <div class="col-sm-7">
+                            <input type="number" class="form-control " formControlName="nTaxes" NumberOnly
+                                (keyup)="onTaxChange()">
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <label for="" class="col-sm-4 col-form-label">Extended Cost with Taxes </label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control bdrnone " readonly
+                                formControlName="nExtendedCostwithTaxes" NumberOnly>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" #closeButton class="btn btn-sm btn-danger" data-bs-dismiss="modal"
+                        (click)="clearData()">
+                        <i class="fa fa-times-circle"></i> Cancel
+                    </button>
+                    <button type="submit" [disabled]="!prLineItemForm.valid" class="btn btn-sm btn-primary">
+                        <i class="fa fa-check-circle"></i> {{lblBtn}}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

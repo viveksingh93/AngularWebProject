@@ -1,0 +1,176 @@
+<div class="card">
+  <div class="card-header bg-white">
+    <h1 class="text-danger" style="height: 15px;">
+      PRN Approver List
+    </h1>
+  </div>
+  <div class="card-body" style="overflow: scroll;">
+    <div class="">
+      <label for="" class="text-danger lbl">Search:</label>
+      <input class="ml-2 txt" type="text" [(ngModel)]="searchText">
+      <button class="btn btn-sm ml-2 btn-primary pull-right" (click)="btnNew()" data-bs-toggle="modal"
+        data-bs-target="#addEditModal">
+        <i class="fa fa-plus"></i> New
+      </button>
+    </div>
+    <table class="table table-bordered mt-4 table-sm">
+      <thead class="table-secondary">
+        <tr>
+          <th>PRN Approver Name</th>
+          <th>PRN Approver Email</th>
+          <th>Status</th>
+          <th>Created By</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngIf="prnApprovers.length>0; else noData">
+          <tr *ngFor="let prnApp of prnApprovers | search: searchText;">
+            <td>{{prnApp.sPRNApproverName}}</td>
+            <td>{{prnApp.sPRNApproverUserName}}</td>
+            <td>{{prnApp.sUpdatedby}}</td>
+            <ng-container *ngIf="prnApp.bActiveStatus == true; else inactive">
+              <span class="badge bageActive bage">Active</span>
+            </ng-container>
+            <ng-template #inactive>
+              <span class="badge bageInactive bage">In-Active</span>
+
+            </ng-template>
+            <td>
+              <a [routerLink]="[]" class="text-info action mr-2" data-bs-toggle="modal" data-bs-target="#viewModal"
+                (click)="getByIDPRNApprover(prnApp.nPRNApproverCode)"><i class="fa fa-eye"></i></a>
+              <a [routerLink]="[]" class="text-success action mr-2 ml-2 ms-1" data-bs-toggle="modal"
+                data-bs-target="#addEditModal" (click)="edit(prnApp.nPRNApproverCode)"><i class="fa fa-edit"></i></a>
+              <a [routerLink]="[]" class="text-danger action mr-2 ml-2 ms-1"
+                (click)="deletePRNApprover(prnApp.nPRNApproverCode)"><i class="fa fa-trash"></i></a>
+            </td>
+          </tr>
+        </ng-container>
+        <ng-template #noData>
+          <tr>
+            <td colspan="8" class="text-danger">No data found</td>
+          </tr>
+        </ng-template>
+
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Create Approver Modal -->
+<div class="modal fade" id="addEditModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: #4e9c85;">
+        <h1 class="modal-title text-white">{{lblModalHeader}}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" (click)="clearData()"></button>
+      </div>
+      <form [formGroup]="prnApproverForm" (ngSubmit)="onSubmit()">
+        <div class="modal-body">
+
+          <div class="row mb-2">
+            <label for="" class="col-sm-5 col-form-label">PRN Approver Name <span class="text-danger">*</span></label>
+            <div class="col-sm-7">
+              <input type="text" class="form-control" formControlName="sPRNApproverName" />
+              <div class=" text-form text-danger"
+                *ngIf="PRNApproverName.errors?.['required'] && PRNApproverName.touched">
+                Please enter PRN Approver Code !!!
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-2">
+            <label for="" class="col-sm-5 col-form-label">PRN Approver User Name <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-7">
+              <input type="text" class="form-control" formControlName="sPRNApproverUserName" />
+              <div class=" text-form text-danger"
+                *ngIf="prnApproverForm.get('sPRNApproverUserName')?.invalid && 
+                  (prnApproverForm.get('sPRNApproverUserName')?.dirty || prnApproverForm.get('sPRNApproverUserName')?.touched)">Please enter valid User
+                email ID
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-2">
+            <label for="" class="col-sm-5 col-form-label">Created By</label>
+            <div class="col-sm-7">
+              <input type="text" class="form-control bdrnone" formControlName="sUpdatedby" readonly />
+            </div>
+          </div>
+
+          <div class="row mb-2">
+            <label for="" class="col-sm-5 col-form-label">Status</label>
+            <div class="col-sm-7">
+              <input class="col-sm-2 mt-2 chk" type="checkbox" value="bActiveStatus" formControlName="bActiveStatus">
+            </div>
+          </div>
+
+
+
+
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" #closeButton class="btn btn-sm btn-danger" data-bs-dismiss="modal"
+            (click)="clearData()">
+            <i class="fa fa-times-circle"></i> Cancel
+          </button>
+          <button type="submit" [disabled]="!prnApproverForm.valid" class="btn btn-sm btn-primary">
+            <i class="fa fa-check-circle"></i> {{lblBtn}}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<!-- View Approver -->
+<div class="modal fade" id="viewModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header " style="background-color: #4e9c85;">
+        <h5 class="modal-title text-white">Approver Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-bordered table-sm">
+          <tbody>
+            <tr>
+            <tr>
+              <td>PRN Approver Name</td>
+              <td>{{objprnApprover.sPRNApproverName}}</td>
+            </tr>
+            <tr>
+              <td>PRN Approver User Name</td>
+              <td>{{objprnApprover.sPRNApproverUserName}}</td>
+            </tr>
+            <tr>
+              <td>Status</td>
+              <td>{{objprnApprover.bActiveStatus}}</td>
+            </tr>
+
+            <tr>
+              <td>Created By</td>
+
+
+              <ng-container *ngIf="objprnApprover.bActiveStatus == true; else inactive">
+                <div>Active</div>
+              </ng-container>
+              <ng-template #inactive>
+                <div>In Active</div>
+              </ng-template>
+            </tr>
+          </tbody>
+
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" #closeButton class="btn btn-sm btn-danger" data-bs-dismiss="modal">
+          <i class="fa fa-times-circle"></i> Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

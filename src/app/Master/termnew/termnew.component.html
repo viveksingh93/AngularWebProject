@@ -1,0 +1,176 @@
+<div class="card ">
+  <div class="card-header bg-white">
+    <h1 class="text-danger" style="height: 15px;">
+      Term List
+
+    </h1>
+  </div>
+  <div class="card-body" style="overflow: scroll;">
+
+    <div class="">
+      <label for="" class="text-danger lbl">Search:</label>
+      <input class="ml-2 txt" type="text" [(ngModel)]="searchText">
+      <button class="btn btn-sm ml-2 btn-primary pull-right" (click)="btnNew()" data-bs-toggle="modal"
+        data-bs-target="#addEditModal">
+        <i class="fa fa-plus"></i> New
+      </button>
+    </div>
+    <table class="table table-bordered mt-4 table-sm">
+      <thead class="table-secondary">
+        <tr>
+          <th>Term Code</th>
+          <th>Term Name</th>
+          <th>Active Status</th>
+          <th>Updated By</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngIf="termnew.length>0; else noData">
+          <tr *ngFor="let trm of termnew | search: searchText;">
+            <td>{{trm.sTermCode}}</td>
+            <td>{{trm.sTermName}}</td>
+            <td>{{trm.sUpdatedBy}}</td>
+            <td>
+              <ng-container *ngIf="trm.bActiveStatus == true; else inactive">
+                <span class="badge bageActive bage">Active</span>
+              </ng-container>
+              <ng-template #inactive>
+                <span class="badge bageInactive bage">In-Active</span>
+              </ng-template>
+            </td>
+            <td>
+              <a [routerLink]="[]" class="text-info action" data-bs-toggle="modal" data-bs-target="#viewModal"
+                (click)="getByTermID(trm.sTermCode)"><i class="fa fa-eye"></i></a>
+              <a [routerLink]="[]" class="text-success action ms-1" data-bs-toggle="modal"
+                data-bs-target="#addEditModal" (click)="edit(trm.sTermCode)"><i class="fa fa-edit"></i></a>
+              <a [routerLink]="[]" class="text-danger action ms-1" (click)="deleteTerm(trm.sTermCode)"><i
+                  class="fa fa-trash"></i></a>
+            </td>
+          </tr>
+        </ng-container>
+        <ng-template #noData>
+          <tr>
+            <td colspan="8" class="text-danger">No data found</td>
+          </tr>
+        </ng-template>
+
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- Create Term Modal -->
+<div class="modal fade" id="addEditModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header " style="background-color: #4e9c85;">
+        <h1 class="modal-title text-white">{{lblModalHeader}}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" (click)="clearData()"></button>
+      </div>
+      <form [formGroup]="termnewForm" (ngSubmit)="onSubmit()">
+        <div class="modal-body">
+
+          <div class="row mb-2">
+            <label for="" class="col-sm-4 col-form-label">Term Code <span class="text-danger">*</span></label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" formControlName="sTermCode" />
+              <div class="text-form text-danger" *ngIf="TermCode.errors?.['required'] && TermCode.touched">
+                Term Code is Required
+              </div>
+
+            </div>
+          </div>
+
+          <div class="row mb-2">
+            <label for="" class="col-sm-4 col-form-label">Term Name <span class="text-danger">*</span></label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" formControlName="sTermName" />
+              <div class="text-form text-danger" *ngIf="TermName.errors?.['required'] && TermName.touched">
+                Term Name is Required
+              </div>
+
+            </div>
+          </div>
+
+
+          <div class="row mb-2">
+            <label for="" class="col-sm-4 col-form-label">Created By</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control bdrnone" placeholder="Enter Created By"
+                formControlName="sUpdatedBy" readonly />
+
+            </div>
+          </div>
+
+          <div class="row mb-2">
+            <label for="" class="col-sm-4 col-form-label">Status</label>
+            <div class="col-sm-8">
+              <input class="  col-sm-2 chk mt-2 col-form-label" type="checkbox" value="bActiveStatus"
+                formControlName="bActiveStatus">
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" #closeButton class="btn btn-sm btn-danger" data-bs-dismiss="modal"
+            (click)="clearData()">
+            <i class="fa fa-times-circle"></i> Cancel
+          </button>
+          <button type="submit" [disabled]="!termnewForm.valid" class="btn btn-sm btn-primary">
+            <i class="fa fa-check-circle"></i> {{lblBtn}}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<!-- View Term -->
+<div class="modal fade" id="viewModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: #4e9c85;">
+        <h5 class="modal-title text-white">Term Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-bordered table-sm">
+          <tbody>
+            <tr>
+              <td>Term Code</td>
+              <td>{{objtermnew.sTermCode}}</td>
+            </tr>
+            <tr>
+              <td>Term Name</td>
+              <td>{{objtermnew.sTermName}}</td>
+            </tr>
+            <tr>
+              <td>Status</td>
+              <td>{{objtermnew.bActiveStatus}}</td>
+            </tr>
+            <tr>
+              <td>Created By</td>
+
+              <ng-container *ngIf="objtermnew.bActiveStatus == true; else inactive">
+                <div>Active</div>
+              </ng-container>
+              <ng-template #inactive>
+                <div>In Active</div>
+              </ng-template>
+
+            </tr>
+          </tbody>
+
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" #closeButton class="btn btn-sm btn-danger" data-bs-dismiss="modal">
+          <i class="fa fa-times-circle" (click)="clearData()"></i> Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

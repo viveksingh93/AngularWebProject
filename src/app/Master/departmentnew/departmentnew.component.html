@@ -1,0 +1,169 @@
+<div class="card">
+    <div class="card-header bg-white">
+      <h1 class="text-danger" style="height: 15px;">
+        Department List
+      </h1>
+    </div>
+    <div class="card-body" style="overflow: scroll;">
+      <div class="">
+        <label for="" class="text-danger lbl">Search:</label>
+        <input class="ml-2 txt" type="text" [(ngModel)]="searchText">
+        <button class="btn btn-sm ml-2 btn-primary pull-right" (click)="btnNew()" data-bs-toggle="modal"
+          data-bs-target="#addEditModal">
+          <i class="fa fa-plus"></i> New
+        </button>
+      </div>
+      <table class="table table-bordered mt-4 table-sm">
+        <thead class="table-secondary">
+          <tr>
+            <th>Department Code</th>
+            <th>Department Name</th>
+            <th>Created By</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngIf="Departments.length>0; else noData">
+              <tr *ngFor="let dpt of Departments | search: searchText;">
+                  <td>{{dpt.sDepartmentCode}}</td>
+                  <td>{{dpt.sDepartmentName}}</td>
+                  <td>{{dpt.sUpdatedBy}}</td> 
+                  
+                  <ng-container *ngIf="dpt.bActiveStatus == true; else inactive" >
+                    <span class="badge bageActive bage" >Active</span>
+                  </ng-container>
+                  <ng-template #inactive>
+                    <span class="badge bageInactive bage">In-Active</span>
+                  </ng-template>
+                  <td>
+                    <a [routerLink]="[]" class="text-info action" data-bs-toggle="modal" data-bs-target="#viewModal" (click)="getByIDDepartment(dpt.sDepartmentCode)"><i class="fa fa-eye"></i></a>
+                    <a [routerLink]="[]" class="text-success action ms-1" data-bs-toggle="modal" data-bs-target="#addEditModal" (click)="edit(dpt.sDepartmentCode)"><i class="fa fa-edit"></i></a>
+                    <a [routerLink]="[]" class="text-danger action ms-1" (click)="deleteDepartment(dpt.sDepartmentCode)"><i class="fa fa-trash"></i></a>
+                  </td>
+                </tr>
+          </ng-container>
+          <ng-template #noData>
+              <tr>
+                  <td colspan="8" class="text-danger">No data found</td>
+              </tr>
+          </ng-template>
+          
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+<!-- Create Department Modal -->
+<div class="modal fade" id="addEditModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header" style="background-color: #4e9c85;">
+          <h1 class="modal-title text-white">{{lblModalHeader}}</h1>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal" (click)="clearData()"
+          ></button>
+        </div>
+        <form [formGroup]="departmentForm" (ngSubmit)="onSubmit()">
+        <div class="modal-body">
+
+          <div class="row mb-2">
+            <label for="" class="col-sm-4 col-form-label">Department Code <span class="text-danger">*</span></label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control form-control-md"  formControlName="sDepartmentCode"/>
+              <div class=" text-form text-danger" *ngIf="DepartmentCode.errors?.['required'] && DepartmentCode.touched">
+                Department code is Required
+            </div>
+            </div>
+          </div>
+
+          <div class="row mb-2">
+            <label for="" class="col-sm-4 col-form-label">Department Name <span class="text-danger">*</span></label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control form-control-md"  formControlName="sDepartmentName"/>
+              <div class=" text-form text-danger" *ngIf="DepartmentName.errors?.['required'] && DepartmentName.touched">
+                Department Name is Required
+            </div>
+            </div>
+          </div>
+
+          <div class="row mb-2">
+            <label for="" class="col-sm-4 col-form-label">Created By </label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control bdrnone"  formControlName="sUpdatedBy" readonly/>
+            </div>
+          </div>
+
+          <div class="row mb-2">
+            <label for="" class="col-sm-4 col-form-label">Status</label>
+            <div class="col-sm-8">
+              <input class="  col-sm-2 chk mt-2 col-form-label" type="checkbox" value="bActiveStatus"
+              formControlName="bActiveStatus">
+            </div>
+          </div>
+                       
+        </div>
+        <div class="modal-footer">
+          <button type="button" #closeButton class="btn btn-sm btn-danger" data-bs-dismiss="modal" (click)="clearData()">
+            <i class="fa fa-times-circle"></i> Cancel
+          </button>
+          <button type="submit" [disabled]="!departmentForm.valid" class="btn btn-sm btn-primary">
+            <i class="fa fa-check-circle"></i> {{lblBtn}}
+          </button>
+        </div>
+      </form>
+      </div>
+    </div>
+  </div>
+
+  
+<!-- View Department -->
+<div class="modal fade" id="viewModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header" style="background-color: #4e9c85;">
+          <h5 class="modal-title text-white">Department Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+            <table class="table table-bordered table-sm">
+                <tbody>
+                    <tr>
+                        <td>Department Code</td>
+                        <td>{{objdepartment.sDepartmentCode}}</td>
+                    </tr>
+                    <tr>
+                        <td>Department Name</td>
+                        <td>{{objdepartment.sDepartmentName}}</td>
+                    </tr>
+                    <tr>
+                        <td>Created By</td>
+                        <td>{{objdepartment.sUpdatedBy}}</td>
+                    </tr>
+                    <tr>
+                        <td>Status</td>
+                        
+                  <ng-container *ngIf="objdepartment.bActiveStatus == true; else inactive">
+                    <div>Active</div>
+                  </ng-container>
+                  <ng-template #inactive>
+                    <div>In Active</div>
+                  </ng-template>
+                        
+                    </tr>
+                   
+                </tbody>
+                
+            </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" #closeButton class="btn btn-sm btn-danger" data-bs-dismiss="modal">
+            <i class="fa fa-times-circle"></i> Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+</div>
+  
